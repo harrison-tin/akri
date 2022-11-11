@@ -89,8 +89,11 @@ fn get_discovery_urls(
         }
     });
     // Remove duplicates in the case that a server was registered with more than one LDS
-    discovery_urls.dedup();
-    discovery_urls
+    // discovery_urls.dedup();
+    // discovery_urls
+
+    // For stress test purpose only, we want to keep the urls to be the mapped hostnames from coredns
+    lds_urls
 }
 
 /// The Rust OPC UA implementation of FindServers does not use a timeout when connecting with a Server over TCP
