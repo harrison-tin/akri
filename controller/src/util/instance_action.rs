@@ -410,22 +410,28 @@ pub async fn handle_instance_change(
             return Ok(());
         }
     };
-    if let Some(broker_spec) = &configuration.spec.broker_spec {
-        match broker_spec {
-            BrokerSpec::BrokerPodSpec(p) => {
-                handle_instance_change_pod(instance, p, action, kube_interface).await
-            }
-            BrokerSpec::BrokerJobSpec(j) => {
-                handle_instance_change_job(
-                    instance.clone(),
-                    *configuration.metadata.generation.as_ref().unwrap(),
-                    j,
-                    action,
-                    kube_interface,
-                )
-                .await
+    trace!("configuration = {:?}", configuration);
+    
+    if let Some(broker_specs) = &configuration.spec.broker_spec {
+        let mut result = Ok(());
+        for broker_spec in broker_specs {
+            match broker_spec {
+                BrokerSpec::BrokerPodSpec(p) => {
+                    result = handle_instance_change_pod(instance, p, action, kube_interface).await;
+                }
+                BrokerSpec::BrokerJobSpec(j) => {
+                    result = handle_instance_change_job(
+                        instance.clone(),
+                        *configuration.metadata.generation.as_ref().unwrap(),
+                        j,
+                        action,
+                        kube_interface,
+                    )
+                    .await;
+                }
             }
         }
+        result
     } else {
         Ok(())
     }

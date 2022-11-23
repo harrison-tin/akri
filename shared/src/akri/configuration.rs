@@ -69,7 +69,7 @@ pub struct ConfigurationSpec {
     /// node that can access any capability described by this
     /// configuration
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub broker_spec: Option<BrokerSpec>,
+    pub broker_spec: Option<Vec<BrokerSpec>>,
 
     /// This defines a service that should be created to access
     /// any specific capability found that is described by this
